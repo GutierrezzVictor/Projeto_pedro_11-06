@@ -1,0 +1,493 @@
+package DAO;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+import DTO.UsuarioDTO;
+
+public class UsuarioDAO {
+	Connection conn;
+	PreparedStatement pstm;
+	ResultSet rs;
+	ArrayList<UsuarioDTO> lista = new ArrayList<>();
+	
+	public void cadastrarCliente(UsuarioDTO  objusuariodto){
+		String sql = "insert into usuario (nome_usuario, email_cadastro, cpf_cadastro, telefone_cadastro, senha_usuario) values(?,?,?,?,?)";
+		
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+			PreparedStatement pstm = conn.prepareStatement(sql);
+			pstm.setString(1, objusuariodto.getNome_usuario());
+			pstm.setString(2, objusuariodto.getEmail_cadastro());
+			pstm.setString(3, objusuariodto.getCpf_cadastro());
+			pstm.setString(4, objusuariodto.getTelefone_cadastro());
+			pstm.setString(5, objusuariodto.getSenha_usuario());
+			
+			pstm.execute();
+			pstm.close();
+			
+		} catch (Exception erro) {
+			JOptionPane.showMessageDialog(null, "CadastroDAO" + erro);
+		}finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+		}
+	}
+	
+
+	public ResultSet autenticacaoUsuario(UsuarioDTO objusuariodto) {
+		conn = new ConexaoDAO().conectaBD();
+		
+
+		try {
+			String sql = "select * from usuario where nome_usuario = ? and senha_usuario=?";
+			
+			PreparedStatement pstm = conn.prepareStatement(sql);
+			pstm.setString(1, objusuariodto.getNome_usuario());
+			pstm.setString(2, objusuariodto.getSenha_usuario());
+			
+			ResultSet rs = pstm.executeQuery();
+	        return rs;
+	        
+
+
+		} catch (SQLException erro) {
+			JOptionPane.showMessageDialog(null, "UsuarioDAO: " + erro);
+			return null;
+		}finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+        }
+    
+	}
+
+	public ArrayList<UsuarioDTO> PesquisarTrainer(){
+		String sql = "select * from trainers";
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+			PreparedStatement pstm = conn.prepareStatement(sql);
+			ResultSet rs = pstm.executeQuery();
+			
+			while (rs.next()) {
+				UsuarioDTO UsuarioDTO = new UsuarioDTO();
+				UsuarioDTO.setTrainer_id(rs.getInt("trainer_id"));
+				UsuarioDTO.setTrainer(rs.getString("Trainer"));
+				UsuarioDTO.setAge(rs.getString("Age"));
+				UsuarioDTO.setAddress(rs.getString("Address"));
+				UsuarioDTO.setMobile(rs.getString("Mobile"));
+				
+				lista.add(UsuarioDTO);
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro");
+		}finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+		}
+		return lista;
+	}
+
+	
+	public void cadastrarTrainer(UsuarioDTO  objusuariodto){
+		String sql = "insert into trainers(Trainer,Age,Address,Mobile) values(?,?,?,?)";
+		
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setString(1, objusuariodto.getTrainer());
+                pstm.setString(2, objusuariodto.getAge());
+                pstm.setString(3, objusuariodto.getAddress());
+                pstm.setString(4, objusuariodto.getMobile());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+        }finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+        }  
+    }
+	
+	public void AlterarTrainer(UsuarioDTO objusuariodto) {
+		String sql ="update trainers set Trainer = ?, Age = ?, Address = ?,Mobile = ? where trainer_id = ?";
+		
+conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setString(1, objusuariodto.getTrainer());
+                pstm.setString(2, objusuariodto.getAge());
+                pstm.setString(3, objusuariodto.getAddress());
+                pstm.setString(4, objusuariodto.getMobile());
+                pstm.setInt(5, objusuariodto.getTrainer_id());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+
+    }finally {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pstm != null) {
+                pstm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            // Lida com a exceção do fechamento dos objetos
+        }
+    }
+}
+	
+	public void ExcluirTrainer(UsuarioDTO objusuariodto) {
+		String sql = "delete from trainers where  trainer_id = ?";
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setInt(1, objusuariodto.getTrainer_id());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+
+    }
+	}
+	
+	public void adicionarCliente(UsuarioDTO  objusuariodto){
+		String sql = "insert into Cliente(Cliente,Age,Address,Mobile) values(?,?,?,?)";
+		
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setString(1, objusuariodto.getCliente());
+                pstm.setString(2, objusuariodto.getCliente_Age());
+                pstm.setString(3, objusuariodto.getCliente_Address());
+                pstm.setString(4, objusuariodto.getCliente_Mobile());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+        }finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+        }
+    }
+	
+	public ArrayList<UsuarioDTO> PesquisarCliente(){
+		String sql = "select * from Cliente";
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+			PreparedStatement pstm = conn.prepareStatement(sql);
+			ResultSet rs = pstm.executeQuery();
+			
+			while (rs.next()) {
+				UsuarioDTO UsuarioDTO = new UsuarioDTO();
+				UsuarioDTO.setCliente_id(rs.getInt("Cliente_id"));
+				UsuarioDTO.setCliente(rs.getString("Cliente"));
+				UsuarioDTO.setCliente_Age(rs.getString("Age"));
+				UsuarioDTO.setCliente_Address(rs.getString("Address"));
+				UsuarioDTO.setCliente_Mobile(rs.getString("Mobile"));
+				
+				lista.add(UsuarioDTO);
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro");
+		}finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+		}
+		return lista;
+	}
+	
+	public void AlterarCliente(UsuarioDTO objusuariodto) {
+		String sql ="update Cliente set Cliente = ?, Age = ?, Address = ?,Mobile = ? where Cliente_id = ?";
+		
+conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setString(1, objusuariodto.getCliente());
+                pstm.setString(2, objusuariodto.getCliente_Age());
+                pstm.setString(3, objusuariodto.getCliente_Address());
+                pstm.setString(4, objusuariodto.getCliente_Mobile());
+                pstm.setInt(5, objusuariodto.getCliente_id());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+    }finally {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pstm != null) {
+                pstm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            // Lida com a exceção do fechamento dos objetos
+        }
+    }
+}
+	
+	public void ExcluirCliente(UsuarioDTO objusuariodto) {
+		String sql = "delete from Cliente where  Cliente_id = ?";
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setInt(1, objusuariodto.getCliente_id());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+    }finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+    }
+	}
+	
+	public void adicionarProdutos(UsuarioDTO  objusuariodto){
+		String sql = "insert into produtos(produto,marca,quantidade,preco) values(?,?,?,?)";
+		
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setString(1, objusuariodto.getProdutos());
+                pstm.setString(2, objusuariodto.getProdutos_marca());
+                pstm.setString(3, objusuariodto.getProdutos_quantidade());
+                pstm.setString(4, objusuariodto.getProdutos_preco());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+        }finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+        }
+    }
+	
+	public ArrayList<UsuarioDTO> PesquisarProdutos(){
+		String sql = "select * from produtos";
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+			PreparedStatement pstm = conn.prepareStatement(sql);
+			ResultSet rs = pstm.executeQuery();
+			
+			while (rs.next()) {
+				UsuarioDTO UsuarioDTO = new UsuarioDTO();
+				UsuarioDTO.setProdutos_id(rs.getInt("produto_id"));
+				UsuarioDTO.setProdutos(rs.getString("produto"));
+				UsuarioDTO.setProdutos_marca(rs.getString("marca"));
+				UsuarioDTO.setProdutos_quantidade(rs.getString("quantidade"));
+				UsuarioDTO.setProdutos_preco(rs.getString("preco"));
+				
+				lista.add(UsuarioDTO);
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro");
+		}finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+		}
+		return lista;
+	}
+
+	public void AlterarProdutos(UsuarioDTO objusuariodto) {
+		String sql ="update produtos set produto = ?, marca = ?, quantidade = ?,preco = ? where produto_id = ?";
+		
+conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setString(1, objusuariodto.getProdutos());
+                pstm.setString(2, objusuariodto.getProdutos_marca());
+                pstm.setString(3, objusuariodto.getProdutos_marca());
+                pstm.setString(4, objusuariodto.getProdutos_preco());
+                pstm.setInt(5, objusuariodto.getProdutos_id());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+    }finally {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pstm != null) {
+                pstm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            // Lida com a exceção do fechamento dos objetos
+        }
+    }
+}
+	public void ExcluirProdutos(UsuarioDTO objusuariodto) {
+		String sql = "delete from produtos where  produto_id = ?";
+		conn = new ConexaoDAO().conectaBD();
+		
+		try {
+     
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setInt(1, objusuariodto.getProdutos_id());
+
+                pstm.execute();
+                pstm.close();
+        } catch (Exception erro) {
+            JOptionPane.showMessageDialog(null, "" + erro);
+    }finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                // Lida com a exceção do fechamento dos objetos
+            }
+    }
+	}
+
+	
+
+}
